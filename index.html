@@ -1,1 +1,114 @@
-
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07152e">
+<title>HIKA ANTI-THEFT ALARM</title>
+<style>
+:root{color-scheme:dark;--bg:#07152e;--panel:#102342;--line:#24456f;--blue:#2878df;--red:#e34252;--muted:#a9bad3}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#17365e 0,#07152e 52%);font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#f4f7ff;min-height:100vh}
+main{max-width:560px;margin:auto;padding:24px 16px 40px}.brand{text-align:center;margin:12px 0 22px}.shield{width:66px;height:66px;margin:auto;border:1px solid #3d75b8;border-radius:22px;display:grid;place-items:center;background:#102c50;font-size:32px}.brand h1{font-size:22px;letter-spacing:1.2px;margin:12px 0 4px}.brand p{color:var(--muted);margin:0;font-size:13px}
+.card{background:rgba(16,35,66,.94);border:1px solid var(--line);border-radius:18px;padding:18px;margin:14px 0;box-shadow:0 12px 30px #0003}
+.status{display:flex;align-items:center;gap:10px;font-weight:700}.dot{width:10px;height:10px;border-radius:50%;background:#8998ad}.dot.on{background:#36d38a;box-shadow:0 0 12px #36d38a}
+.big{width:100%;border:0;border-radius:14px;padding:17px;font-size:17px;font-weight:800;color:white;background:linear-gradient(135deg,#2878df,#1551a8);margin-top:16px}
+.big.stop{background:linear-gradient(135deg,#ed5965,#b82035)}button{cursor:pointer}button:disabled{opacity:.5;cursor:not-allowed}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}.tile{background:#0b1c36;border:1px solid var(--line);border-radius:12px;padding:12px}.tile b{display:block;font-size:13px}.tile small{color:var(--muted);display:block;margin-top:5px;line-height:1.35}
+label{display:block;font-size:13px;color:#dce8fa;margin:12px 0 6px}input,select{width:100%;border:1px solid #34577f;background:#071a33;color:white;border-radius:10px;padding:12px;font-size:16px}
+.row{display:flex;gap:10px;align-items:center}.row button{flex:1;border:1px solid var(--line);background:#17375e;color:white;border-radius:10px;padding:12px;font-weight:650}
+.note{font-size:12px;line-height:1.5;color:var(--muted)}.warning{border-left:3px solid #e5ad43;padding:10px 12px;background:#392d19;border-radius:8px;color:#ffe7b7;font-size:12px;line-height:1.5}
+#alarmBanner{display:none;background:#8e1727;border:1px solid #ff7180;border-radius:14px;padding:14px;text-align:center;font-weight:800;animation:pulse .7s infinite alternate}
+@keyframes pulse{to{background:#d11f36}}
+footer{text-align:center;color:#8197b8;font-size:11px;margin-top:22px}
+</style>
+</head>
+<body>
+<main>
+ <header class="brand"><div class="shield">🛡️</div><h1>HIKA ANTI-THEFT ALARM</h1><p>Phone protection • Eegumsa bilbilaa</p></header>
+ <div id="alarmBanner" role="alert">🚨 ALARM! Bilbilli socho'e ykn screen tuqame!</div>
+ <section class="card">
+  <div class="status"><span id="dot" class="dot"></span><span id="statusText">NOT ARMED • Hin eegamu</span></div>
+  <p class="note" id="statusHint">Settings kee qopheessi; achii booda alarm jalqabi.</p>
+  <button id="armBtn" class="big">🔒 ACTIVATE ALARM • Eegumsa jalqabi</button>
+  <button id="stopBtn" class="big stop" hidden>STOP ALARM • Alarm dhaabi</button>
+  <div class="grid">
+   <div class="tile"><b>📱 Movement</b><small>Bilbilli yoo socho'e alarm</small></div>
+   <div class="tile"><b>👆 Screen touch</b><small>Yeroo eegumsi jiru screen tuqame alarm</small></div>
+   <div class="tile"><b>🎙️ Voice</b><small>“HIKA STOP” jedhi</small></div>
+   <div class="tile"><b>🔑 Password</b><small>Password galchiitii dhaabi</small></div>
+  </div>
+ </section>
+ <section class="card">
+  <h3>⚙️ Settings • Qindaa'ina</h3>
+  <label for="password">Alarm password • Jecha iccitii</label>
+  <input id="password" type="password" minlength="4" placeholder="Password haaraa (yoo xiqqaate 4)" autocomplete="new-password">
+  <label for="voicePhrase">Voice command • Ajaja sagalee</label>
+  <input id="voicePhrase" value="hika stop" maxlength="30">
+  <div class="row" style="margin-top:14px">
+   <button id="testBtn">Test alarm</button><button id="saveBtn">Save settings</button>
+  </div>
+  <p class="note">Password browser kana keessatti qofa yeroo ammaa tursiifama. Password kee nama biraatti hin himin.</p>
+ </section>
+ <section class="card">
+  <h3>🔐 Screen Lock</h3>
+  <p class="note">Website qofti Android screen lock gochuu hin danda'u. Button armaan gadii bilbila kee lock hin godhu; screen lock sirrii argachuuf native Android app fi hayyama Device Admin barbaachisa.</p>
+  <button id="lockInfo" class="big" style="margin-top:4px">How to enable Android screen lock</button>
+ </section>
+ <div class="warning">Hubachiisa: Motion detection fi voice recognition browser/phone irratti hundaa'uun garaagarummaa qabu. Website browser keessatti banamee fi screen isaa hojjechaa jiru qofa irratti alarm amanamaa ta'uu danda'a; appichi background keessatti yeroo hunda hin hojjetu. Motion permission yoo gaafatame eeyyami.</div>
+ <footer>HIKA • Android web prototype</footer>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+let armed=false, alarmOn=false, audioCtx=null, oscillator=null, recognition=null, lastMotion=0, lastTouch=0;
+let savedPassword=sessionStorage.getItem('hika_pw')||'';
+$('password').value=savedPassword;
+$('voicePhrase').value=localStorage.getItem('hika_voice')||'hika stop';
+function setStatus(text,on){$('statusText').textContent=text;$('dot').classList.toggle('on',!!on)}
+function beep(){
+ try{
+  audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();
+  if(audioCtx.state==='suspended') audioCtx.resume();
+  oscillator=audioCtx.createOscillator();const gain=audioCtx.createGain();
+  oscillator.type='sawtooth';oscillator.frequency.value=880;gain.gain.value=.16;
+  oscillator.connect(gain);gain.connect(audioCtx.destination);oscillator.start();
+  let high=true;window.hikaBeepTimer=setInterval(()=>{if(!oscillator)return;oscillator.frequency.setValueAtTime(high?660:1040,audioCtx.currentTime);high=!high},350);
+ }catch(e){alert('Sagalee browser kana keessatti hin banamne. Screen tuqiitii irra deebi’i.')}
+}
+function stopSound(){clearInterval(window.hikaBeepTimer);if(oscillator){try{oscillator.stop()}catch(e){}oscillator=null}}
+function triggerAlarm(reason){
+ if(!armed||alarmOn)return;alarmOn=true;$('alarmBanner').style.display='block';$('stopBtn').hidden=false;
+ $('armBtn').hidden=true;setStatus('🚨 ALARM ACTIVE • ALARM IJJAA',false);$('statusHint').textContent=reason||'Bilbila tuqame.';
+ beep(); startVoice();
+}
+function stopAlarm(){alarmOn=false;stopSound();$('alarmBanner').style.display='none';$('stopBtn').hidden=true;$('armBtn').hidden=false;setStatus(armed?'ARMED • EEGUMSA IRRA':'NOT ARMED • HIN EEGAMU',armed);if(recognition){try{recognition.stop()}catch(e){}}}
+function disarm(){stopAlarm();armed=false;setStatus('NOT ARMED • HIN EEGAMU',false);$('statusHint').textContent='Eegumsi dhaabbate.'}
+function startVoice(){
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return;
+ try{recognition=new SR();recognition.lang='en-US';recognition.continuous=true;recognition.interimResults=false;
+ recognition.onresult=e=>{for(let i=e.resultIndex;i<e.results.length;i++){let said=e.results[i][0].transcript.toLowerCase();let phrase=$('voicePhrase').value.trim().toLowerCase();if(phrase&&said.includes(phrase)){disarm();alert('Voice command fudhatame. Alarm dhaabbate.');break;}}};
+ recognition.onend=()=>{if(alarmOn){try{recognition.start()}catch(e){}}};recognition.start();
+ }catch(e){}
+}
+async function enableMotion(){
+ if(typeof DeviceMotionEvent==='undefined')return;
+ try{if(typeof DeviceMotionEvent.requestPermission==='function'){let p=await DeviceMotionEvent.requestPermission();if(p!=='granted')return;}
+ window.addEventListener('devicemotion',e=>{if(!armed||alarmOn)return;let a=e.accelerationIncludingGravity;if(!a)return;let total=Math.sqrt((a.x||0)**2+(a.y||0)**2+(a.z||0)**2);let now=Date.now();if(Math.abs(total-9.8)>3.5&&now-lastMotion>1200){lastMotion=now;triggerAlarm('Bilbilli socho’e!');}});
+ }catch(e){console.log(e)}
+}
+$('armBtn').onclick=async()=>{
+ if(!$('password').value||$('password').value.length<4){alert('Dura password yoo xiqqaate qubee/ lakkoofsa 4 qabu galchi.');$('password').focus();return;}
+ savedPassword=$('password').value;sessionStorage.setItem('hika_pw',savedPassword);localStorage.setItem('hika_voice',$('voicePhrase').value);
+ armed=true;setStatus('ARMED • EEGUMSA IRRA',true);$('statusHint').textContent='Bilbila bakka isaa kaa’i. Screen tuquun alarm ni kakaasa.';$('armBtn').hidden=true;
+ await enableMotion();
+ // Alarm is armed after this tap; touches on the screen trigger it except the emergency controls.
+};
+document.addEventListener('touchstart',e=>{if(!armed||alarmOn)return;let now=Date.now();if(now-lastTouch>700){lastTouch=now;triggerAlarm('Screen tuqame!');}},{passive:true});
+document.addEventListener('click',e=>{if(!armed||alarmOn)return;if(e.target.closest('button,input'))return;triggerAlarm('Screen tuqame!')});
+$('stopBtn').onclick=()=>{let p=prompt('Password galchi / Enter password');if(p===savedPassword&&p){disarm()}else{alert('Password dogoggora! / Wrong password');}};
+$('testBtn').onclick=()=>{if(alarmOn){stopAlarm()}else{alarmOn=true;$('alarmBanner').style.display='block';$('stopBtn').hidden=false;beep();setTimeout(()=>{stopSound();alarmOn=false;$('alarmBanner').style.display='none';$('stopBtn').hidden=true},2500)}};
+$('saveBtn').onclick=()=>{if($('password').value.length<4){alert('Password yoo xiqqaate 4 ta’uu qaba.');return;}savedPassword=$('password').value;sessionStorage.setItem('hika_pw',savedPassword);localStorage.setItem('hika_voice',$('voicePhrase').value);alert('Settings saved on this browser.');};
+$('lockInfo').onclick=()=>alert('Android Settings > Security and privacy > Screen lock keessa seeniitii PIN, Pattern ykn Password qindeessi. Website kun ofumaan screen lock gochuu hin danda’u.');
+$('stopBtn').addEventListener('touchstart',e=>e.stopPropagation());
+</script>
+</body>
+</html>
